@@ -15,8 +15,16 @@ let [counter, setCounter] = useState(0)
 // let counter = 0;
 function addValue(){
   if(counter < 10){
-    counter += 1;
-    setCounter(counter)
+    setCounter(counter+1)
+    // setCounter(counter+1)
+    // setCounter(counter+1)
+    // setCounter(counter+1)
+  
+    //here if i write   setCounter(counter) more 4 times this does not effect the code because it creates a bunch and work for a single time because same work is repeating, so the value increased by one only. but if i wants to increase like this then we can use the call back method.
+    // setCounter((prevCounter) => prevCounter + 1)
+    // setCounter((prevCounter) => prevCounter + 1)
+    // setCounter((prevCounter) => prevCounter + 1)
+
   } 
 }
 
