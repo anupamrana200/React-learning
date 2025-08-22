@@ -8,6 +8,10 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import { AuthLayout, Login } from './components/index.js'
 
+//Added for test, after test we will delete this. 
+import appwriteService from './appwrite/config.js'
+window.appwriteService = appwriteService;
+
 
 import AddPost from "./pages/AddPost";
 import Signup from './pages/Signup'

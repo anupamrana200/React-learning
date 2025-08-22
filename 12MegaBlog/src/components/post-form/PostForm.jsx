@@ -19,35 +19,48 @@ export default function PostForm({ post }) {
     const userData = useSelector((state) => state.auth.userData);
 
     const submit = async (data) => {
-        if (post) {
-            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+    // Add a try...catch block to handle potential errors
+    try {
+      if (post) {
+        // This is the logic for UPDATING a post
+        const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
 
-            if (file) {
-                appwriteService.deleteFile(post.featuredImage);
-            }
-
-            const dbPost = await appwriteService.updatePost(post.$id, {
-                ...data,
-                featuredImage: file ? file.$id : undefined,
-            });
-
-            if (dbPost) {
-                navigate(`/post/${dbPost.$id}`);
-            }
-        } else {
-            const file = await appwriteService.uploadFile(data.image[0]);
-
-            if (file) {
-                const fileId = file.$id;
-                data.featuredImage = fileId;
-                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
-
-                if (dbPost) {
-                    navigate(`/post/${dbPost.$id}`);
-                }
-            }
+        if (file) {
+          appwriteService.deleteFile(post['featured-image']);
         }
-    };
+
+        const dbPost = await appwriteService.updatePost(post.$id, {
+          ...data,
+          'featured-image': file ? file.$id : undefined,
+        });
+
+        if (dbPost) {
+          navigate(`/post/${dbPost.$id}`);
+        }
+      } else {
+        // This is the logic for CREATING a new post
+        const file = await appwriteService.uploadFile(data.image[0]);
+
+        if (file) {
+          const fileId = file.$id;
+          data.featuredImage = fileId; // This key is temporary for passing to the service
+          const dbPost = await appwriteService.createPost({ 
+            ...data, 
+            userId: userData.$id,
+          });
+
+          if (dbPost) {
+            navigate(`/post/${dbPost.$id}`);
+          }
+        }
+      }
+    } catch (error) {
+        // This will now catch any error from the upload or post creation
+        console.error("Failed to submit post:", error);
+        // You can also set an error state here to show a message to the user
+        // For example: setError("Failed to upload image. Please try again.");
+    }
+  };
 
     const slugTransform = useCallback((value) => {
         if (value && typeof value === "string")
