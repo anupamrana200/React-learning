@@ -34,19 +34,27 @@ export default function PostForm({ post }) {
             if (dbPost) {
                 navigate(`/post/${dbPost.$id}`);
             }
-        } else {
-            const file = await appwriteService.uploadFile(data.image[0]);
+        }else {
+    let file;
+    if (data.image && data.image[0]) {
+        file = await appwriteService.uploadFile(data.image[0]);
+        // console.log('Uploaded file:', file);
+    }
 
-            if (file) {
-                const fileId = file.$id;
-                data.featuredImage = fileId;
-                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
+    if (file && file.$id) {
+        const fileId = file.$id;
+        data.featuredImage = fileId;
+        const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
 
-                if (dbPost) {
-                    navigate(`/post/${dbPost.$id}`);
-                }
-            }
+        if (dbPost) {
+            navigate(`/post/${dbPost.$id}`);
         }
+    } else if (!file && !data.image) {
+        alert('Please select an image to upload.');
+    } else {
+        alert('Image upload failed. Please try again.');
+    }
+}
     };
 
     const slugTransform = useCallback((value) => {

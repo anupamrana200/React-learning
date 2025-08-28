@@ -122,10 +122,15 @@ export class Service{
   }
 
   getFilePreview(fileId){
-    return this.bucket.getFilePreview(
-      conf.appwriteBucketId,
-      fileId
-    )
+    // const result = this.bucket.getFilePreview(
+    //   conf.appwriteBucketId,
+    //   fileId
+    // )
+    // // console.log(result);
+    // return result;
+
+      // Manually construct the view URL instead of using getFilePreview
+      return `${conf.appwriteUrl}/storage/buckets/${conf.appwriteBucketId}/files/${fileId}/view?project=${conf.appwriteProjectId}`;
   }
 }
 
