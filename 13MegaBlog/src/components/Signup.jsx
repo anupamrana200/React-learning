@@ -5,7 +5,7 @@ import {login} from '../store/authSlice'
 import {Button, Input, Logo} from './index.js'
 import {useDispatch} from 'react-redux'
 import {useForm} from 'react-hook-form'
-
+import toast from 'react-hot-toast'
 function Signup() {
     const navigate = useNavigate()
     const [error, setError] = useState("")
@@ -17,6 +17,7 @@ function Signup() {
       try {
           const userData = await authService.createAccount(data)
           if (userData) {
+              toast.success("Congratulations! Account Creation Successful.", { duration: 3000 });
               const userData = await authService.getCurrentUser()
               if(userData) dispatch(login(userData));
               navigate("/")

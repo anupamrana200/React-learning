@@ -4,6 +4,7 @@ import { Button, Input, RTE, Select } from "..";
 import appwriteService from "../../appwrite/config";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 export default function PostForm({ post }) {
     const { register, handleSubmit, watch, setValue, control, getValues } = useForm({
@@ -32,41 +33,43 @@ export default function PostForm({ post }) {
             });
 
             if (dbPost) {
+                toast.success("Yupp! Post Updated", { duration: 3000 });
                 navigate(`/post/${dbPost.$id}`);
             }
         }else {
-    let file;
-    if (data.image && data.image[0]) {
-        file = await appwriteService.uploadFile(data.image[0]);
-        // console.log('Uploaded file:', file);
-    }
+            let file;
+            if (data.image && data.image[0]) {
+                file = await appwriteService.uploadFile(data.image[0]);
+                // console.log('Uploaded file:', file);
+            }
+        
+            if (file && file.$id) {
+                const fileId = file.$id;
+                data.featuredImage = fileId;
+                const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
+            
+                if (dbPost) {
+                    toast.success("Yupp! Post Created", { duration: 3000 });
+                    navigate(`/post/${dbPost.$id}`);
+                }
+            } else if (!file && !data.image) {
+                alert('Please select an image to upload.');
+            } else {
+                alert('Image upload failed. Please try again.');
+            }
+            }
+        };
 
-    if (file && file.$id) {
-        const fileId = file.$id;
-        data.featuredImage = fileId;
-        const dbPost = await appwriteService.createPost({ ...data, userId: userData.$id });
-
-        if (dbPost) {
-            navigate(`/post/${dbPost.$id}`);
-        }
-    } else if (!file && !data.image) {
-        alert('Please select an image to upload.');
-    } else {
-        alert('Image upload failed. Please try again.');
-    }
-}
-    };
-
-    const slugTransform = useCallback((value) => {
-        if (value && typeof value === "string")
-            return value
-                .trim()
-                .toLowerCase()
-                .replace(/[^a-zA-Z\d\s]+/g, "-")
-                .replace(/\s/g, "-");
-
-        return "";
-    }, []);
+        const slugTransform = useCallback((value) => {
+            if (value && typeof value === "string")
+                return value
+                    .trim()
+                    .toLowerCase()
+                    .replace(/[^a-zA-Z\d\s]+/g, "-")
+                    .replace(/\s/g, "-");
+    
+            return "";
+        }, []);
 
     React.useEffect(() => {
         const subscription = watch((value, { name }) => {
