@@ -22,7 +22,7 @@ function Login() {
                 navigate("/")
             }
         } catch (error) {
-            setError(error.message)
+            setError("Email and Password Combination Mismatch, please enter correct combination.")
         }
     }
 

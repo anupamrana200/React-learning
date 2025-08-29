@@ -22,7 +22,7 @@ function Signup() {
               navigate("/")
           }
       } catch (error) {
-          setError(error.message)
+          setError("Please Enter a Password Length Between 8 - 256 Character to Successfully Creating a Account");
       }
     }
 
